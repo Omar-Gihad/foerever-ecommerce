@@ -87,12 +87,12 @@ const Collection = () => {
   }
 
   useEffect(() => {
-    setData(
-      products.filter((el) =>
+    setData((prevData) =>
+      prevData.filter((el) =>
         el.title.toLowerCase().includes(searchValue.trim().toLowerCase())
       )
     );
-  }, [searchValue]);
+  }, [searchValue, category, subCategory]);
 
   return (
     <>
