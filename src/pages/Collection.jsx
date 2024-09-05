@@ -92,7 +92,7 @@ const Collection = () => {
         el.title.toLowerCase().includes(searchValue.trim().toLowerCase())
       )
     );
-  }, [searchValue]);
+  }, [searchValue, category, subCategory]);
 
   return (
     <>
