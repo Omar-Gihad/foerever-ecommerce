@@ -12,31 +12,38 @@ import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import SignUp from "./pages/SignUp";
 import Cart from "./pages/Cart";
+import { createContext, useState } from "react";
+
+export const searchContext = createContext();
 
 function App() {
+  const [showSearch, setShowSearch] = useState(false);
+
   const location = useLocation();
   const isCollectionPage = location.pathname === "/collection";
 
   return (
     <>
-      <Nav />
+      <searchContext.Provider value={{ showSearch, setShowSearch }}>
+        <Nav />
 
-      <main className="px-5 sm:px-20 ">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/collection" element={<Collection />} />
-          <Route path="/products/:id" element={<ProductInfo />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgotPassword" element={<ForgotPassword />} />
-          <Route path="/signUp" element={<SignUp />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/*" element={<h1>NOT FOUND</h1>} />
-        </Routes>
-      </main>
+        <main className="px-5 sm:px-20 ">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/collection" element={<Collection />} />
+            <Route path="/products/:id" element={<ProductInfo />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/forgotPassword" element={<ForgotPassword />} />
+            <Route path="/signUp" element={<SignUp />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/*" element={<h1>NOT FOUND</h1>} />
+          </Routes>
+        </main>
 
-      {!isCollectionPage && <Footer />}
+        {!isCollectionPage && <Footer />}
+      </searchContext.Provider>
     </>
   );
 }
