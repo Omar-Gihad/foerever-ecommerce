@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Title from "../includes/Title";
 import { assets } from "../assets/frontend_assets/assets";
 import { products } from "../assets/frontend_assets/assets";
 import Card from "../includes/Card";
 import Footer from "../includes/Footer";
+import { searchContext } from "../App";
 
 const Collection = () => {
+  const { showSearch, setShowSearch } = useContext(searchContext);
+
   const [show, setShow] = useState(true);
-  const [showSearch, setShowSearch] = useState(true);
   const [data, setData] = useState([]);
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
