@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { assets } from "../assets/frontend_assets/assets";
 import { NavLink, useNavigate } from "react-router-dom";
+import { searchContext } from "../App";
 
 const Nav = () => {
+  const { showSearch, setShowSearch } = useContext(searchContext);
+
   // state to control responsiive navbar
   const [show, setShow] = useState(false);
   const nav = useNavigate();
@@ -46,7 +49,10 @@ const Nav = () => {
           src={assets.search_icon}
           alt=""
           className="w-5 cursor-pointer"
-          onClick={() => nav("/collection")}
+          onClick={() => {
+            nav("/collection");
+            setShowSearch(true)
+          }}
         />
         <NavLink to="/login">
           <img src={assets.profile_icon} alt="" className="w-5" />
