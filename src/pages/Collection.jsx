@@ -19,25 +19,32 @@ const Collection = () => {
   }, []);
 
   useEffect(() => {
-    let productClone = [...products];
+    let filteredProducts = [...products];
 
-    // Apply category filter if any are selected
+    // Apply category filter
     if (category.length > 0) {
-      productClone = productClone.filter((el) =>
+      filteredProducts = filteredProducts.filter((el) =>
         category.includes(el.category)
       );
     }
 
-    // Apply subcategory filter if any are selected
+    // Apply subcategory filter
     if (subCategory.length > 0) {
-      productClone = productClone.filter((el) =>
+      filteredProducts = filteredProducts.filter((el) =>
         subCategory.includes(el.subCategory)
       );
     }
 
-    // Set the filtered data
-    setData(productClone);
-  }, [category, subCategory]);
+    // Apply search filter
+    if (searchValue !== "") {
+      filteredProducts = filteredProducts.filter((el) =>
+        el.title.toLowerCase().includes(searchValue.trim().toLowerCase())
+      );
+    }
+
+    // Set the filtered and searched data
+    setData(filteredProducts);
+  }, [category, subCategory, searchValue]);
 
   // Handle category filter changes
   function handleCategoryClick(e) {
@@ -86,13 +93,13 @@ const Collection = () => {
     setSearchValue(e.target.value);
   }
 
-  useEffect(() => {
-    setData((prevData) =>
-      prevData.filter((el) =>
-        el.title.toLowerCase().includes(searchValue.trim().toLowerCase())
-      )
-    );
-  }, [searchValue, category, subCategory]);
+  // useEffect(() => {
+  //   setData((prevData) =>
+  //     prevData.filter((el) =>
+  //       el.title.toLowerCase().includes(searchValue.trim().toLowerCase())
+  //     )
+  //   );
+  // }, [searchValue, category, subCategory]);
 
   return (
     <>
