@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Title from "../includes/Title";
 import { assets } from "../assets/frontend_assets/assets";
 import { products } from "../assets/frontend_assets/assets";
 import Card from "../includes/Card";
 import Footer from "../includes/Footer";
+import { searchContext } from "../App";
 
 const Collection = () => {
+  const { showSearch, setShowSearch } = useContext(searchContext);
+
   const [show, setShow] = useState(true);
-  const [showSearch, setShowSearch] = useState(true);
   const [data, setData] = useState([]);
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
@@ -19,25 +21,32 @@ const Collection = () => {
   }, []);
 
   useEffect(() => {
-    let productClone = [...products];
+    let filteredProducts = [...products];
 
-    // Apply category filter if any are selected
+    // Apply category filter
     if (category.length > 0) {
-      productClone = productClone.filter((el) =>
+      filteredProducts = filteredProducts.filter((el) =>
         category.includes(el.category)
       );
     }
 
-    // Apply subcategory filter if any are selected
+    // Apply subcategory filter
     if (subCategory.length > 0) {
-      productClone = productClone.filter((el) =>
+      filteredProducts = filteredProducts.filter((el) =>
         subCategory.includes(el.subCategory)
       );
     }
 
-    // Set the filtered data
-    setData(productClone);
-  }, [category, subCategory]);
+    // Apply search filter
+    if (searchValue !== "") {
+      filteredProducts = filteredProducts.filter((el) =>
+        el.title.toLowerCase().includes(searchValue.trim().toLowerCase())
+      );
+    }
+
+    // Set the filtered and searched data
+    setData(filteredProducts);
+  }, [category, subCategory, searchValue]);
 
   // Handle category filter changes
   function handleCategoryClick(e) {
@@ -86,13 +95,17 @@ const Collection = () => {
     setSearchValue(e.target.value);
   }
 
-  useEffect(() => {
-    setData(
-      products.filter((el) =>
-        el.title.toLowerCase().includes(searchValue.trim().toLowerCase())
-      )
-    );
-  }, [searchValue]);
+  // useEffect(() => {
+  //   if (searchValue !== "") {
+  //     setData((prevData) =>
+  //       prevData.filter((el) =>
+  //         el.title.toLowerCase().includes(searchValue.trim().toLowerCase())
+  //       )
+  //     );
+  //   } else {
+  //     setData(products);
+  //   }
+  // }, [searchValue, category, subCategory]);
 
   return (
     <>

@@ -1,15 +1,61 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { products } from "../assets/frontend_assets/assets";
 import { useParams } from "react-router-dom";
 import RealtedProducts from "../components/RealtedProducts";
+import { searchContext } from "../App";
 
 const ProductInfo = () => {
-  const [product, setProduct] = useState({});
+  const [imageIndex, setImageIndex] = useState(0);
+  const { product, setProduct } = useContext(searchContext);
+  const { productSize, setProductSize } = useContext(searchContext);
+  const { cartItems, setCartItems } = useContext(searchContext);
+  const { cartNumber, setCartNumber } = useContext(searchContext);
+
   const { id } = useParams();
   useEffect(() => {
     const product = products.find((item) => item.id === id);
     if (product) setProduct(product);
   }, [id]);
+
+  function handleImageClick(index) {
+    setImageIndex(index);
+  }
+
+  function handleSizeClick(size) {
+    setProductSize(size);
+  }
+
+  function handleAddToCart() {
+    if (product && productSize) {
+      const existingItemIndex = cartItems.findIndex(
+        (item) => item.id === product.id && item.size === productSize
+      );
+
+      if (existingItemIndex !== -1) {
+        // If the item already exists, update the count
+        const updatedCartItems = [...cartItems];
+        updatedCartItems[existingItemIndex].count += 1;
+        setCartItems(updatedCartItems);
+      } else {
+        // Otherwise, add a new item to the cart
+        setCartItems([
+          ...cartItems,
+          { ...product, size: productSize, count: 1 },
+        ]);
+      }
+    } else {
+      alert("Please select a size");
+    }
+  }
+
+  useEffect(() => {
+    const cartCount = cartItems?.reduce((acc, el) => {
+      return (acc += el.count);
+    }, 0);
+
+    setCartNumber(cartCount);
+  }, [cartItems]);
+
   return (
     <>
       <div className="border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100">
@@ -17,16 +63,30 @@ const ProductInfo = () => {
           {/* product photo */}
           <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
             <div className="flex sm:flex-col sm:w-[20%] w-full">
-              <img
-                className="w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer"
-                src={product.image}
-                alt=""
-              />
+              {product.image?.map((el, index) => {
+                return (
+                  <img
+                    className="w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer"
+                    src={el}
+                    alt=""
+                    key={index}
+                    onClick={() => handleImageClick(index)}
+                  />
+                );
+              })}
             </div>
 
             {/* product details */}
             <div className="w-full sm:w-[80%]">
-              <img className="w-full h-auto" src={product.image} alt="" />
+              <img
+                className="w-full h-auto"
+                src={
+                  product.image?.length
+                    ? product.image[imageIndex]
+                    : product.image
+                }
+                alt=""
+              />
             </div>
           </div>
 
@@ -42,13 +102,18 @@ const ProductInfo = () => {
                   <button
                     className="border focus:border-orange-600 py-2 px-4 bg-gray-100 "
                     key={index}
+                    // value={productSize}
+                    onClick={() => handleSizeClick(el)}
                   >
                     {el}
                   </button>
                 ))}
               </div>
 
-              <button className="bg-black text-white px-8 py-3 font-medium text-sm active:bg-gray-700 w-40">
+              <button
+                className="bg-black text-white px-8 py-3 font-medium text-sm active:bg-gray-700 w-40"
+                onClick={handleAddToCart}
+              >
                 ADD TO CART
               </button>
               <hr className="mt-8 sm:w-4/5" />
